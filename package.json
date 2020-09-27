@@ -1,0 +1,31 @@
+{
+  "name": "discord-bot",
+  "version": "1.0.0",
+  "description": "A Discord bot for DnD.",
+  "main": "bot.js",
+  "engines": {
+    "node": "10.x",
+    "npm": "*"
+  },
+  "dependencies": {
+    "discord.js": "^12.3.1",
+    "eslint": "^7.9.0",
+    "mongodb": "^3.6.2",
+    "pm2": "^4.4.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "node bot.js",
+    "start": "pm2 start bot.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/8BitRobot/DND-Discord-Bot.git"
+  },
+  "author": "Premkumar Giridhar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/8BitRobot/DND-Discord-Bot/issues"
+  },
+  "homepage": "https://github.com/8BitRobot/DND-Discord-Bot#readme"
+}

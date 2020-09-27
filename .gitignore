@@ -1,0 +1,5 @@
+node_modules
+config.json
+.eslintrc.js
+__pycache__
+TEMP.pdf
