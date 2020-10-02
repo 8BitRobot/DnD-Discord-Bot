@@ -147,7 +147,7 @@ module.exports = {
 
         if (args[0] === "dice") {
 
-            let allDice = args[1].split(/([+-])/);
+            let allDice = args.slice(1).join("").split(/([+-])/);
             let user = message.author.username;
             let roll = diceRollGenerator(allDice, user);
 
