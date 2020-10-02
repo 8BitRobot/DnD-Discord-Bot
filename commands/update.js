@@ -2,18 +2,18 @@ const MongoClient = require("mongodb").MongoClient;
 
 let main = ["name", "xp"];
 let ability = [
-    "str", "dex", "cha", "wis", "int", "con", 
-    "strength", "dexterity", "charisma", "wisdom", "intelligence", "constitution"
+    "str", "dex", "cha", "wis", "int", "con",
+    "strength", "dexterity", "charisma", "wisdom", "intelligence", "constitution",
 ];
 let saving = ["str-save", "dex-save", "cha-save", "wis-save", "int-save", "con-save"];
 let skills = [
     "acrobatics", "animal-handling", "arcana", "athletics", "deception", "history",
     "insight", "intimidation", "investigation", "medicine", "nature", "perception",
-    "performance", "persuasion", "religion", "sleight-of-hand", "stealth", "survival"
+    "performance", "persuasion", "religion", "sleight-of-hand", "stealth", "survival",
 ];
 
 module.exports = {
-	name: "update",
+    name: "update",
     description: `Update the name, XP, or a modifier for your existing character.
 
 **MODIFIERS:**
@@ -42,8 +42,8 @@ module.exports = {
     \`!update name john\`: updates the character's name to john.
     \`!update xp 1000\`: updates the character's xp to 1000.
     `,
-	execute(message, args) {
-        MongoClient.connect("mongodb://localhost:27017", function(err, client) {
+    execute(message, args) {
+        MongoClient.connect("mongodb://localhost:27017", function (err, client) {
             if (err) {
                 console.error("Error in connecting.");
                 message.channel.send("There was an error. Please wait a few moments, then try again.");
@@ -51,16 +51,19 @@ module.exports = {
             }
 
             let characters = client.db("DnDB").collection("characters");
-            
+
             characters.countDocuments({"characterOwnedBy": message.author.username}, (err, result) => {
                 if (result === 0) {
                     message.channel.send("It appears you don't have a character registered. Upload the PDF of your character sheet to register one.");
                 }
             });
 
-            if (main.includes(args[0]) || ability.includes(args[0]) || saving.includes(args[0]) || skills.includes(args[0])) {
+            if (main.includes(args[0]) ||
+                ability.includes(args[0]) ||
+                saving.includes(args[0]) ||
+                skills.includes(args[0])) {
                 let newDoc = {
-                    "$set": {}
+                    "$set": {},
                 };
                 if (main.includes(args[0])) {
                     if (args[0] === "name") {
@@ -84,4 +87,4 @@ module.exports = {
             }
         });
     },
-}
+};

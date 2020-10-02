@@ -49,7 +49,6 @@ async def create():
                 break
         if field_is_important:
             resp[field_type][field_name] = value
-            print(field_name);
 
     fp.close()
 

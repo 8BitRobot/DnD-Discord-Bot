@@ -2,7 +2,7 @@
 
 const Discord = require("discord.js");
 const client = new Discord.Client();
-const config = require("./config.json")
+const config = require("./config.json");
 
 const request = require("request");
 const fs = require("fs");
@@ -14,24 +14,24 @@ function download(url){
 }
 
 client.once("ready", () => {
-	console.log("Ready!");
+    console.log("Ready!");
 });
 
 client.login(config.token);
 
 client.commands = new Discord.Collection();
 
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith(".js"));
+const commandFiles = fs.readdirSync("./commands").filter(file => file.endsWith(".js"));
 
 for (const file of commandFiles) {
-	const command = require(`./commands/${file}`);
-	client.commands.set(command.name, command);
+    const command = require(`./commands/${file}`);
+    client.commands.set(command.name, command);
 }
 
 let toBeDownloaded = {
     toDL: false,
     url: "",
-}
+};
 
 client.on("message", (message) => {
     if (message.author.bot) {
@@ -41,17 +41,17 @@ client.on("message", (message) => {
     if (attachments.length === 1 && attachments[0].name.toLowerCase().endsWith(".pdf")) {
         toBeDownloaded.toDL = true;
         toBeDownloaded.url = attachments[0].url;
-        message.channel.send("It looks like you've sent a PDF. Is this a character sheet for a character you want to register with the bot? Reply with \`!y\` or \`!yes\` to confirm.");
-    } else if (toBeDownloaded.toDL && (message.content.toLowerCase() === "!y" || message.content.toLowerCase() === "!yes")) {
+        message.channel.send("It looks like you've sent a PDF. Is this a character sheet for a character you want to register with the bot? Reply with `!y` or `!yes` to confirm.");
+    } else if (toBeDownloaded.toDL && ["!y", "!yes", "/y", "/yes"].includes(message.content.toLowerCase())) {
         download(toBeDownloaded.url);
         toBeDownloaded.toDL = false;
         toBeDownloaded.url = "";
-        message.channel.send("File downloaded. Use the command \`!create\` to register the character as yours.")
+        message.channel.send("File downloaded. Use the command `!create` to register the character as yours.");
     } else if (toBeDownloaded.toDL) {
-        message.channel.send("The \`!y\` command was not detected, so the file wasn't downloaded. If you do want to download it, just send the PDF again.");
+        message.channel.send("The `!y` command was not detected, so the file wasn't downloaded. If you do want to download it, just send the PDF again.");
         toBeDownloaded.toDL = false;
         toBeDownloaded.url = "";
-    } else if (message.content.startsWith("!help ")) {
+    } else if (message.content.startsWith("!help ") || message.content.startsWith("/help ")) {
         let args = message.content.substring(6).trim().split(/ +/);
         for (let i of args) {
             try {
@@ -62,7 +62,7 @@ client.on("message", (message) => {
                 message.channel.send("Currently, that command's help description doesn't exist.");
             }
         }
-    } else if (message.content.startsWith("!")) {
+    } else if (message.content.startsWith("!") || message.content.startsWith("/")) {
         let args = message.content.substring(1).trim().split(/ +/);
         let command = args.shift().toLowerCase();
         try {
