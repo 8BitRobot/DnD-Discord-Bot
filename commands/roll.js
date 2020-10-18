@@ -101,6 +101,8 @@ function getRollByModifier(category, element, advantage, character, username) {
 
     if (throwModifier[0] === "-") {
         throwModifier = ["-", throwModifier.substring(1)];
+    } else if (throwModifier[0] === "0") {
+        throwModifier = ["+", "0"];
     } else {
         throwModifier = ["+", throwModifier.substring(1)];
     }
