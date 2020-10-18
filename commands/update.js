@@ -62,24 +62,50 @@ module.exports = {
                 ability.includes(args[0]) ||
                 saving.includes(args[0]) ||
                 skills.includes(args[0])) {
+
                 let newDoc = {
                     "$set": {},
                 };
+
                 if (main.includes(args[0])) {
+
                     if (args[0] === "name") {
+
                         args[0] === "player-name";
+                        newDoc["$set"]["main." + args[0]] = args[1].toString();
+
+                    } else if (args[0] === "xp") {
+
+                        let oldXP = parseInt(characters.find({"characterOwnedBy": message.author.username})["main"]["xp"]);
+
+                        if (args[1][0] === "+") {
+                            newDoc["$set"]["main.xp"] = (oldXP + parseInt(args[1])).toString();
+                        } else if (args[1][0] === "-") {
+                            newDoc["$set"]["main.xp"] = (oldXP - parseInt(args[1])).toString();
+                        } else {
+                            newDoc["$set"]["main.xp"] = args[1];
+                        }
+
                     }
-                    newDoc["$set"]["main." + args[0]] = args[1].toString();
+
                 } else if (ability.includes(args[0])) {
+
                     newDoc["$set"]["ability." + args[0].substring(0, 3)] = args[1].toString();
+
                 } else if (saving.includes(args[0])) {
+
                     if (["str", "dex", "cha", "int", "con", "wis"].includes(args[0])) {
                         args[0] += "-save";
                     }
+
                     newDoc["$set"]["saving." + args[0]] = args[1].toString();
+
                 } else if (skills.includes(args[0])) {
+
                     newDoc["$set"]["skill." + args[0]] = args[1].toString();
+
                 }
+
                 characters.updateOne({"characterOwnedBy": message.author.username}, newDoc);
                 message.channel.send("Updated successfully.");
             } else {

@@ -67,7 +67,6 @@ function diceRollGenerator(allDice, user) {
             } else if (operator[0] === "-") {
                 subtracting = true;
             }
-
         } else {
 
             return "An error has occurred.";
@@ -100,6 +99,12 @@ function getRollByModifier(category, element, advantage, character, username) {
 
     let throwModifier = character[category][category === "saving" ? element + "-save" : element];
 
+    if (throwModifier[0] === "-") {
+        throwModifier = ["-", throwModifier.substring(1)];
+    } else {
+        throwModifier = ["+", throwModifier.substring(1)];
+    }
+
     if (!throwModifier) {
 
         throwModifier = character[category][category === "saving" ? rollableMap.get(element) + "-save" : rollableMap.get(element)];
@@ -111,13 +116,13 @@ function getRollByModifier(category, element, advantage, character, username) {
 
     if (advantage === 0) {
 
-        let roll = diceRollGenerator(["1d20", parseInt(throwModifier).toString()], username);
+        let roll = diceRollGenerator(["1d20", ...throwModifier], username);
         return roll;
 
     } else if (advantage === 1) {
 
-        let roll1 = diceRollGenerator(["1d20", parseInt(throwModifier).toString()], username);
-        let roll2 = diceRollGenerator(["1d20", parseInt(throwModifier).toString()], username);
+        let roll1 = diceRollGenerator(["1d20", ...throwModifier], username);
+        let roll2 = diceRollGenerator(["1d20", ...throwModifier], username);
         let roll1Value = parseInt(roll1.match(/Total: `(\d+)`$/)[1]);
         let roll2Value = parseInt(roll2.match(/Total: `(\d+)`$/)[1]);
         let rollString = roll1 + "\n\n" + roll2 + "\n\n" + `Roll with advantage: \`${Math.max(roll1Value, roll2Value)}\``;
@@ -125,8 +130,8 @@ function getRollByModifier(category, element, advantage, character, username) {
 
     } else if (advantage === -1) {
 
-        let roll1 = diceRollGenerator(["1d20", parseInt(throwModifier).toString()], username);
-        let roll2 = diceRollGenerator(["1d20", parseInt(throwModifier).toString()], username);
+        let roll1 = diceRollGenerator(["1d20", ...throwModifier], username);
+        let roll2 = diceRollGenerator(["1d20", ...throwModifier], username);
         let roll1Value = parseInt(roll1.match(/Total: `(\d+)`$/)[1]);
         let roll2Value = parseInt(roll2.match(/Total: `(\d+)`$/)[1]);
         let rollString = roll1 + "\n\n" + roll2 + "\n\n" + `Roll with disadvantage: \`${Math.min(roll1Value, roll2Value)}\``;
