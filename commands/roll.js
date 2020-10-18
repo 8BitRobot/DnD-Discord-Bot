@@ -79,23 +79,20 @@ function diceRollGenerator(allDice, user) {
 
 }
 
-let rollableMap = new Map([
-    ["name", "main:player-name"],
-    ["xp", "main:xp"],
-    ["strength", "str"],
-    ["dexterity", "dex"],
-    ["intelligence", "int"],
-    ["wisdom", "wis"],
-    ["charisma", "cha"],
-    ["constitution", "con"],
-]);
-
-// let skillsList = ["acrobatics", "animal-handling", "arcana", "athletics", "deception", "history",
-// "insight", "intimidation", "investigation", "medicine", "nature", "perception",
-// "performance", "persuasion", "religion", "sleight-of-hand", "stealth", "survival"]
-// let traitsList = ["strength", "intelligence", "dexterity", "wisdom", "charisma", "constitution"];
+let abilityMap = {
+    "strength": "str",
+    "dexterity": "dex",
+    "intelligence": "int",
+    "wisdom": "wis",
+    "charisma": "cha",
+    "constitution": "con",
+};
 
 function getRollByModifier(category, element, advantage, character, username) {
+
+    if (category === "ability" && Object.keys(abilityMap).includes(element)) {
+        element = abilityMap[element];
+    }
 
     let throwModifier = character[category][category === "saving" ? element + "-save" : element];
 
