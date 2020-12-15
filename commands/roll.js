@@ -106,7 +106,7 @@ function getRollByModifier(category, element, advantage, character, username) {
 
     if (!throwModifier) {
 
-        throwModifier = character[category][category === "saving" ? rollableMap.get(element) + "-save" : rollableMap.get(element)];
+        throwModifier = character[category][category === "saving" ? abilityMap.get(element) + "-save" : abilityMap.get(element)];
         if (!throwModifier) {
             return "An error has occurred.";
         }

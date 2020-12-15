@@ -14,7 +14,7 @@ let skills = [
 
 module.exports = {
     name: "update",
-    description: `Update the name, XP, or a modifier for your existing character.
+    description: `Update any property for your existing character.
 
 **MODIFIERS:**
 
@@ -41,16 +41,40 @@ module.exports = {
 **Examples**:
     \`!update name john\`: updates the character's name to john.
     \`!update xp 1000\`: updates the character's xp to 1000.
+
+**OWNER**
+
+**Syntax**:
+    \`!update owner <old_username> <new_username>\`
+
+**Examples**:
+    \`!update owner Jakehaq HAQ\`: updates the character's owner from Jakehaq to HAQ (case-sensitive).
     `,
     execute(message, args) {
-        MongoClient.connect("mongodb://localhost:27017", function (err, client) {
+        MongoClient.connect("mongodb://localhost:27017", async function (err, client) {
             if (err) {
                 console.error("Error in connecting.");
                 message.channel.send("There was an error. Please wait a few moments, then try again.");
                 return;
             }
 
+            args[0] = args[0].toLowerCase();
+
             let characters = client.db("DnDB").collection("characters");
+
+            if (args[0] === "owner") {
+
+                let usernameExists = await characters.findOne({"characterOwnedBy": args[1]});
+                if (!usernameExists) {
+                    message.channel.send("A character owned by that user doesn't exist. Please try again.");
+                    return;
+                }
+
+                characters.updateOne({"characterOwnedBy": args[1]}, {"$set": {"characterOwnedBy": args[2]}});
+                message.channel.send("Updated successfully.");
+                return;
+
+            }
 
             characters.countDocuments({"characterOwnedBy": message.author.username}, (err, result) => {
                 if (result === 0) {
@@ -67,6 +91,8 @@ module.exports = {
                     "$set": {},
                 };
 
+                let username = message.author.username;
+
                 if (main.includes(args[0])) {
 
                     if (args[0] === "name") {
@@ -76,12 +102,11 @@ module.exports = {
 
                     } else if (args[0] === "xp") {
 
-                        let oldXP = parseInt(characters.find({"characterOwnedBy": message.author.username})["main"]["xp"]);
+                        let oldXP = await characters.findOne({"characterOwnedBy": message.author.username});
+                        oldXP = parseInt(oldXP["main"]["xp"]);
 
-                        if (args[1][0] === "+") {
+                        if (args[1][0] === "+" || args[1][0] === "-") {
                             newDoc["$set"]["main.xp"] = (oldXP + parseInt(args[1])).toString();
-                        } else if (args[1][0] === "-") {
-                            newDoc["$set"]["main.xp"] = (oldXP - parseInt(args[1])).toString();
                         } else {
                             newDoc["$set"]["main.xp"] = args[1];
                         }
@@ -106,10 +131,10 @@ module.exports = {
 
                 }
 
-                characters.updateOne({"characterOwnedBy": message.author.username}, newDoc);
+                characters.updateOne({"characterOwnedBy": username}, newDoc);
                 message.channel.send("Updated successfully.");
             } else {
-                message.channel.send(`Sorry, that property doesn't exist. Here's the list of properties you can try: \n${main.toString() + "," + ability.toString() + "," + saving.toString() + "," + skills.toString()}`);
+                message.channel.send(`Sorry, that property doesn't exist. Use \`!help update\` to see what properties you can update.`);
             }
         });
     },
